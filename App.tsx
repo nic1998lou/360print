@@ -122,7 +122,7 @@ const App: React.FC = () => {
           {!sourceImageUrl && !isLoading && !error && (
             <>
               <div className="flex flex-col items-center text-center mb-8 no-print">
-                <img src="/assets/logo.png" alt="Logo do Aplicativo" className="h-28 w-auto object-contain" />
+                <img src="/assets/logo.png" alt="Logo do Aplicativo" className="h-52 w-auto object-contain" />
                 <h1 className="text-4xl font-bold mt-6 text-white tracking-tight">Bem-vindo!</h1>
                 <p className="mt-2 text-white/80 max-w-sm">Transforme imagens 360 em sólidos de papel para montar.</p>
               </div>
