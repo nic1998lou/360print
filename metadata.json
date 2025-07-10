@@ -1,0 +1,6 @@
+{
+  "name": "Gerador de Esfera Imprimível 360",
+  "description": "Um aplicativo para transformar imagens panorâmicas 360 ou texturas de planetas em um layout A4 que pode ser recortado e colado para formar uma esfera perfeita.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
