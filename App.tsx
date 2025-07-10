@@ -2,27 +2,10 @@
 import React, { useState, useCallback } from 'react';
 import { ImageUploader } from './components/ImageUploader';
 import { Instructions } from './components/Instructions';
-import { DownloadIcon, PrintIcon, SphereIcon, CubeIcon, LoadingSpinnerIcon } from './components/icons';
+import { DownloadIcon, PrintIcon, SphereIcon, CubeIcon, LoadingSpinnerIcon, ArrowLeftIcon } from './components/icons';
 import { processImageToGores, processImageToCubeMap } from './services/imageProcessor';
 
 type Shape = 'sphere' | 'cube';
-
-const GeometricDivider: React.FC = () => (
-    <div className="absolute bottom-0 left-0 w-full h-[150px] overflow-hidden leading-none" aria-hidden="true">
-        <svg
-            className="relative block w-full h-full"
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-            viewBox="0 0 1440 150"
-        >
-            <path
-                fill="#ffffff"
-                d="M0 150 L0 70 L120 90 L240 60 L360 80 L480 50 L600 70 L720 40 L840 60 L960 30 L1080 50 L1200 20 L1320 40 L1440 20 L1440 150 Z"
-            />
-        </svg>
-    </div>
-);
-
 
 const App: React.FC = () => {
   const [sourceImageUrl, setSourceImageUrl] = useState<string | null>(null);
@@ -85,6 +68,17 @@ const App: React.FC = () => {
     setIsLoading(false);
     setProcessedShape(null);
   };
+
+  const handleGoBack = () => {
+    if (processedImageUrl) {
+      setProcessedImageUrl(null);
+      setProcessedShape(null);
+      setError(null);
+    } 
+    else if (sourceImageUrl) {
+      handleReset();
+    }
+  };
   
   const getShapeName = (shape: Shape | null) => {
     if (shape === 'sphere') return 'Esfera';
@@ -92,134 +86,146 @@ const App: React.FC = () => {
     return '';
   };
 
+  const showBackButton = sourceImageUrl && !isLoading && !error;
+  const getHeaderTitle = () => {
+    if (error) return "Ocorreu um Erro";
+    if (isLoading) return "Processando...";
+    if (processedImageUrl) return `Resultado: ${getShapeName(processedShape)}`;
+    if (sourceImageUrl) return "Escolha o Formato";
+    return ""; // No title on welcome screen
+  };
+
   return (
-    <div className="bg-white text-slate-700">
+    <div className="bg-gradient-to-br from-[#A23CCA] to-indigo-600 min-h-screen text-white font-sans">
       
-      <div className="relative no-print bg-[#0052ff] h-[480px]">
-        <div className="relative z-10 text-center text-white px-4 pt-20 sm:pt-24">
-            <h1 className="text-sm font-bold tracking-widest uppercase">Bem-vindo ao Futuro da Criação</h1>
-            <h2 className="text-5xl md:text-7xl font-extrabold tracking-tight mt-2">GERADOR DE SÓLIDOS</h2>
-            <p className="mt-4 max-w-xl mx-auto text-lg">
-            Transforme sua imagem panorâmica em um sólido de papel para imprimir e montar.
-            </p>
-        </div>
-        <GeometricDivider />
-      </div>
-
-      <main className="relative px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="max-w-7xl mx-auto mt-[-208px] relative z-20">
-            {!sourceImageUrl && !isLoading && !error && (
-              <ImageUploader onImageUpload={handleImageUpload} isLoading={isLoading} />
-            )}
-
-            {isLoading && (
-                <div className="flex flex-col items-center justify-center h-96 bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-200">
-                    <LoadingSpinnerIcon className="w-16 h-16 text-[#0052ff]"/>
-                    <p className="mt-4 text-lg text-slate-600">Processando sua imagem... por favor, aguarde.</p>
-                </div>
-            )}
-
-            {error && (
-                <div className="w-full max-w-3xl mx-auto my-4 p-8 bg-red-50/80 backdrop-blur-md border border-red-300 rounded-3xl text-center shadow-2xl">
-                    <p className="font-bold text-lg text-red-800">Ocorreu um Erro!</p>
-                    <p className="text-red-600 mt-2">{error}</p>
-                    <button onClick={handleReset} className="mt-6 px-5 py-2.5 bg-slate-600 hover:bg-slate-700 text-white rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500">
-                        Tentar Novamente
+      <header className="no-print bg-transparent absolute top-0 left-0 right-0 z-30">
+          <div className="max-w-lg mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="relative flex items-center justify-center h-16">
+                  {showBackButton && (
+                    <button
+                      onClick={handleGoBack}
+                      className="absolute left-0 p-2 text-white/80 hover:text-white transition-colors rounded-full hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#A23CCA] focus:ring-white"
+                      aria-label="Voltar"
+                    >
+                      <ArrowLeftIcon className="w-6 h-6" />
                     </button>
+                  )}
+                  <h1 className="text-lg font-bold tracking-tight text-center px-12 truncate">
+                      {getHeaderTitle()}
+                  </h1>
+              </div>
+          </div>
+      </header>
+
+      <main className="relative px-4 sm:px-6 lg:px-8 pt-24 pb-8 flex flex-col justify-center min-h-screen">
+        <div className="max-w-md w-full mx-auto">
+          {!sourceImageUrl && !isLoading && !error && (
+            <>
+              <div className="flex flex-col items-center text-center mb-8 no-print">
+                <img src="/assets/logo.png" alt="Logo do Aplicativo" className="h-28 w-auto object-contain" />
+                <h1 className="text-4xl font-bold mt-6 text-white tracking-tight">Bem-vindo!</h1>
+                <p className="mt-2 text-white/80 max-w-sm">Transforme imagens 360 em sólidos de papel para montar.</p>
+              </div>
+              <ImageUploader onImageUpload={handleImageUpload} isLoading={isLoading} />
+            </>
+          )}
+
+          {isLoading && (
+              <div className="w-full flex flex-col items-center justify-center p-8 min-h-[300px] bg-white/90 backdrop-blur-sm text-slate-800 rounded-3xl shadow-2xl shadow-black/20">
+                  <LoadingSpinnerIcon className="w-16 h-16 text-[#A23CCA]"/>
+                  <p className="mt-4 text-lg text-slate-600 text-center">Processando sua imagem...</p>
+              </div>
+          )}
+
+          {error && (
+              <div className="w-full my-4 p-8 bg-white/90 backdrop-blur-sm rounded-3xl text-center shadow-2xl shadow-black/20">
+                  <p className="font-bold text-lg text-red-700">Ocorreu um Erro!</p>
+                  <p className="text-red-600 mt-2">{error}</p>
+                  <button onClick={handleReset} className="mt-6 w-full flex items-center justify-center gap-3 px-8 py-3 bg-[#A23CCA] text-white font-bold text-base rounded-full hover:bg-[#8f2eb8] transition-all duration-300 transform hover:scale-105 shadow-lg shadow-[#a23cca]/30 focus:outline-none focus:ring-4 focus:ring-[#a23cca]/50">
+                      Tentar Novamente
+                  </button>
+              </div>
+          )}
+          
+          {sourceImageUrl && !processedImageUrl && !isLoading && !error && (
+            <div className="w-full bg-white/90 backdrop-blur-sm text-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl shadow-black/20 no-print">
+              <div className="flex flex-col items-center">
+                <h2 className="text-2xl font-bold mb-4 tracking-tight text-center">Sua Imagem Original</h2>
+                <div className="w-full aspect-video bg-slate-100 rounded-xl overflow-hidden ring-1 ring-slate-200 shadow-inner mb-8">
+                    <img src={sourceImageUrl} alt="Original" className="w-full h-full object-cover" />
                 </div>
-            )}
-            
-            {/* --- SHAPE SELECTION SCREEN --- */}
-            {sourceImageUrl && !processedImageUrl && !isLoading && !error && (
-              <div className="w-full max-w-5xl mx-auto bg-white p-6 sm:p-10 rounded-3xl shadow-2xl border border-slate-200/50 no-print">
-                <div className="flex flex-col items-center">
-                  <h2 className="text-3xl font-bold mb-6 text-slate-800 tracking-tight text-center">1. Sua Imagem Original</h2>
-                  <div className="w-full max-w-3xl mx-auto aspect-video bg-slate-100 rounded-2xl overflow-hidden ring-1 ring-slate-200/50 shadow-inner">
-                      <img src={sourceImageUrl} alt="Original" className="w-full h-full object-cover" />
-                  </div>
-                
-                  <div className="w-full mt-12 text-center">
-                      <h2 className="text-3xl font-bold mb-8 text-slate-800 tracking-tight">2. Escolha o Formato Final</h2>
-                      <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-6">
-                      <button
-                          onClick={() => handleProcessRequest('sphere')}
-                          className="flex items-center gap-3 px-8 py-4 bg-[#0052ff] text-white font-bold text-lg rounded-md hover:bg-[#0048e0] transition-all duration-300 transform hover:scale-105 shadow-lg shadow-blue-500/30 focus:outline-none focus:ring-4 focus:ring-blue-300"
-                      >
-                          <SphereIcon className="w-7 h-7" />
-                          Gerar Esfera
-                      </button>
-                      <button
-                          onClick={() => handleProcessRequest('cube')}
-                          className="flex items-center gap-3 px-8 py-4 bg-white text-slate-700 border-2 border-slate-300 font-bold text-lg rounded-md hover:bg-slate-100 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-slate-500/20 focus:outline-none focus:ring-4 focus:ring-slate-200"
-                      >
-                          <CubeIcon className="w-7 h-7 text-[#0052ff]" />
-                          Gerar Cubo
-                      </button>
+              
+                <div className="w-full border-t border-slate-200 pt-6 text-center">
+                    <div className="flex flex-col justify-center items-center gap-4 w-full">
+                    <button
+                        onClick={() => handleProcessRequest('sphere')}
+                        className="w-full flex items-center justify-center gap-3 px-8 py-3 bg-[#A23CCA] text-white font-bold text-base rounded-full hover:bg-[#8f2eb8] transition-all duration-300 transform hover:scale-105 shadow-lg shadow-[#a23cca]/30 focus:outline-none focus:ring-4 focus:ring-[#a23cca]/50"
+                    >
+                        <SphereIcon className="w-6 h-6" />
+                        Gerar Esfera
+                    </button>
+                    <button
+                        onClick={() => handleProcessRequest('cube')}
+                        className="w-full flex items-center justify-center gap-3 px-8 py-3 bg-white text-[#A23CCA] border-2 border-purple-200 font-bold text-base rounded-full hover:bg-purple-50 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-slate-500/20 focus:outline-none focus:ring-4 focus:ring-purple-200"
+                    >
+                        <CubeIcon className="w-6 h-6" />
+                        Gerar Cubo
+                    </button>
+                    </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {processedImageUrl && !isLoading && !error && (
+            <>
+              <div className="w-full bg-white/90 backdrop-blur-sm text-slate-800 p-4 sm:p-6 rounded-3xl shadow-2xl shadow-black/20 no-print">
+                <div className="flex flex-col gap-6">
+                  <div className="flex flex-col items-center">
+                    <div className="w-full bg-slate-50/50 p-4 rounded-2xl border border-slate-200">
+                      <h2 className="text-lg font-bold mb-3 text-slate-800 text-center">
+                        Pronto para Imprimir ({getShapeName(processedShape)})
+                      </h2>
+                      <div id="printable-area" className="w-full aspect-[297/210] bg-white rounded-lg p-1 shadow-inner ring-1 ring-slate-200">
+                          {processedImageUrl && <img id="printable-image" src={processedImageUrl} alt="Processada para impressão" className="w-full h-full object-contain" />}
                       </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-center">
+                    <div className="w-full bg-slate-50/50 p-4 rounded-2xl border border-slate-200">
+                        <h2 className="text-lg font-bold mb-3 text-slate-800 text-center">Sua Imagem Original</h2>
+                        <div className="w-full aspect-video bg-slate-100 rounded-xl overflow-hidden ring-1 ring-slate-200 shadow-inner">
+                            {sourceImageUrl && <img src={sourceImageUrl} alt="Original" className="w-full h-full object-cover" />}
+                        </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-center items-center gap-4 w-full">
+                    <a
+                      href={processedImageUrl}
+                      download={`printable_${processedShape}.png`}
+                      className="flex-1 flex items-center justify-center gap-3 px-6 py-3 bg-white text-[#A23CCA] border-2 border-purple-200 font-bold text-base rounded-full hover:bg-purple-50 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-slate-500/20 focus:outline-none focus:ring-4 focus:ring-purple-200"
+                    >
+                      <DownloadIcon className="w-5 h-5" />
+                      Download
+                    </a>
+                    <button
+                      onClick={handlePrint}
+                      className="flex-1 flex items-center justify-center gap-3 px-6 py-3 bg-[#A23CCA] text-white font-bold text-base rounded-full hover:bg-[#8f2eb8] transition-all duration-300 transform hover:scale-105 shadow-lg shadow-[#a23cca]/30 focus:outline-none focus:ring-4 focus:ring-[#a23cca]/50"
+                    >
+                      <PrintIcon className="w-5 h-5" />
+                      Imprimir
+                    </button>
                   </div>
                 </div>
               </div>
-            )}
-            
-            {/* --- RESULTS SCREEN --- */}
-            {processedImageUrl && !isLoading && !error && (
-              <>
-                <div className="w-full bg-white p-6 sm:p-10 rounded-3xl shadow-2xl border border-slate-200/50 no-print">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Original Image Card */}
-                    <div className="flex flex-col items-center">
-                      <div className="w-full bg-white p-4 sm:p-6 rounded-2xl shadow-xl border border-slate-200">
-                          <h2 className="text-xl font-bold mb-4 text-slate-800 text-center">Sua Imagem Original</h2>
-                          <div className="w-full aspect-video bg-slate-100 rounded-lg overflow-hidden ring-1 ring-slate-200">
-                              {sourceImageUrl && <img src={sourceImageUrl} alt="Original" className="w-full h-full object-cover" />}
-                          </div>
-                      </div>
-                    </div>
-                    
-                    {/* Processed Image Card */}
-                    <div className="flex flex-col items-center">
-                      <div className="w-full bg-white p-4 sm:p-6 rounded-2xl shadow-xl border border-slate-200">
-                        <h2 className="text-xl font-bold mb-4 text-slate-800 text-center">
-                          Pronto para Imprimir ({getShapeName(processedShape)})
-                        </h2>
-                        <div id="printable-area" className="w-full aspect-[297/210] bg-slate-50 rounded-lg p-2 shadow-inner">
-                            {processedImageUrl && <img id="printable-image" src={processedImageUrl} alt="Processada para impressão" className="w-full h-full object-contain" />}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Action Buttons */}
-                  <div className="flex items-center flex-wrap justify-center gap-4 mt-8">
-                      <a
-                          href={processedImageUrl}
-                          download={`${processedShape}-para-imprimir.png`}
-                          className="flex items-center gap-2 px-6 py-3 bg-[#0052ff] text-white font-semibold rounded-lg hover:bg-[#0048e0] transition-all duration-300 transform hover:scale-105 shadow-lg shadow-blue-500/30 focus:outline-none focus:ring-4 focus:ring-blue-300"
-                      >
-                          <DownloadIcon className="w-5 h-5" />
-                          Baixar PNG
-                      </a>
-                      <button
-                          onClick={handlePrint}
-                          className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-300 font-semibold rounded-lg hover:bg-slate-100 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-slate-500/20 focus:outline-none focus:ring-4 focus:ring-slate-200"
-                      >
-                          <PrintIcon className="w-5 h-5" />
-                          Imprimir
-                      </button>
-                  </div>
-                </div>
+              <div className="mt-8">
+                {processedShape && <Instructions shape={processedShape} />}
+              </div>
+            </>
+          )}
 
-                {/* Instructions and Reset */}
-                <div className="mt-12 no-print">
-                    <Instructions shape={processedShape!} />
-                    <div className="text-center mt-12">
-                        <button onClick={handleReset} className="px-6 py-3 bg-white text-slate-700 border border-slate-300 rounded-lg font-semibold transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400">
-                            Começar de Novo com Outra Imagem
-                        </button>
-                    </div>
-                </div>
-              </>
-            )}
         </div>
       </main>
     </div>

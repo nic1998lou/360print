@@ -7,31 +7,33 @@ interface InstructionsProps {
 
 export const Instructions: React.FC<InstructionsProps> = ({ shape }) => {
 
+  const baseCardClasses = "w-full bg-white/90 backdrop-blur-sm text-slate-800 p-6 sm:p-8 rounded-3xl shadow-2xl shadow-black/20 no-print";
+
   if (shape === 'cube') {
     return (
-      <div className="w-full max-w-4xl mx-auto bg-white p-6 sm:p-10 rounded-2xl border border-slate-200 shadow-xl no-print">
+      <div className={baseCardClasses}>
         <div className="flex items-center gap-4 mb-6">
-          <div className="p-3 bg-blue-100 rounded-full border border-blue-200">
-            <CubeIcon className="w-8 h-8 text-blue-600" />
+          <div className="p-3 bg-purple-100 rounded-full border border-purple-200">
+            <CubeIcon className="w-8 h-8 text-[#A23CCA]" />
           </div>
-          <h2 className="text-3xl font-bold text-slate-800">Como Montar seu Cubo</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold">Como Montar seu Cubo</h2>
         </div>
         <ol className="list-decimal list-inside space-y-4 text-slate-600 text-lg marker:text-slate-400">
           <li>
-            <span className="font-semibold text-slate-800">Imprima:</span> Imprima a imagem gerada em uma folha A4. Use papel mais grosso (cartolina) para um resultado mais firme.
+            <span className="font-semibold text-slate-800">Imprima:</span> Em papel A4, de preferência cartolina.
           </li>
           <li>
-            <span className="font-semibold text-slate-800">Recorte:</span> Recorte cuidadosamente o contorno externo da forma (a "cruz").
+            <span className="font-semibold text-slate-800">Recorte:</span> Recorte o contorno externo da forma.
           </li>
           <li>
-            <span className="font-semibold text-slate-800">Dobre:</span> Dobre para dentro ao longo de todas as linhas internas que separam os quadrados.
+            <span className="font-semibold text-slate-800">Dobre:</span> Dobre para dentro ao longo das linhas tracejadas.
           </li>
           <li>
-            <span className="font-semibold text-slate-800">Cole:</span> Forme o cubo e cole as abas para unir as faces. Comece formando uma "caixa" aberta e depois feche a "tampa".
+            <span className="font-semibold text-slate-800">Cole:</span> Forme o cubo e cole as abas para unir as faces.
           </li>
         </ol>
-        <p className="mt-8 text-blue-800 bg-blue-50 p-4 rounded-lg border border-blue-200">
-          <strong>Dica:</strong> Vincar bem as dobras com uma régua antes de colar ajuda a obter um cubo com ângulos mais retos e definidos.
+        <p className="mt-8 text-purple-800 bg-purple-50 p-4 rounded-lg border border-purple-200">
+          <strong>Dica:</strong> Vincar bem as dobras com uma régua ajuda a obter um cubo com ângulos mais retos.
         </p>
       </div>
     );
@@ -39,29 +41,29 @@ export const Instructions: React.FC<InstructionsProps> = ({ shape }) => {
 
   if (shape === 'sphere') {
     return (
-      <div className="w-full max-w-4xl mx-auto bg-white p-6 sm:p-10 rounded-2xl border border-slate-200 shadow-xl no-print">
+      <div className={baseCardClasses}>
         <div className="flex items-center gap-4 mb-6">
-           <div className="p-3 bg-blue-100 rounded-full border border-blue-200">
-            <ScissorsIcon className="w-8 h-8 text-blue-600" />
+           <div className="p-3 bg-purple-100 rounded-full border border-purple-200">
+            <ScissorsIcon className="w-8 h-8 text-[#A23CCA]" />
            </div>
-          <h2 className="text-3xl font-bold text-slate-800">Como Montar sua Esfera</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold">Como Montar sua Esfera</h2>
         </div>
         <ol className="list-decimal list-inside space-y-4 text-slate-600 text-lg marker:text-slate-400">
           <li>
-            <span className="font-semibold text-slate-800">Imprima:</span> Imprima a imagem gerada em uma folha de papel A4. Use um papel mais grosso (cartolina) para um resultado mais firme.
+            <span className="font-semibold text-slate-800">Imprima:</span> Em papel A4, de preferência cartolina.
           </li>
           <li>
-            <span className="font-semibold text-slate-800">Recorte:</span> Recorte cuidadosamente cada um dos 12 gomos (as fatias que parecem gomos de laranja).
+            <span className="font-semibold text-slate-800">Recorte:</span> Recorte cada um dos 12 gomos.
           </li>
           <li>
-            <span className="font-semibold text-slate-800">Cole as Bordas:</span> Comece a colar as bordas dos gomos umas nas outras. Alinhe bem as pontas (os polos) para que a esfera fique simétrica.
+            <span className="font-semibold text-slate-800">Cole as Bordas:</span> Comece a colar as bordas dos gomos umas nas outras, alinhando as pontas.
           </li>
           <li>
-            <span className="font-semibold text-slate-800">Feche a Esfera:</span> Continue colando até restar apenas a última junção. Passe cola na última borda e feche cuidadosamente para completar sua esfera.
+            <span className="font-semibold text-slate-800">Feche a Esfera:</span> Continue colando até fechar a última junção.
           </li>
         </ol>
-        <p className="mt-8 text-blue-800 bg-blue-50 p-4 rounded-lg border border-blue-200">
-          <strong>Dica:</strong> Faça pequenas dobras nas bordas antes de colar para facilitar a junção. Tenha paciência e divirta-se!
+        <p className="mt-8 text-purple-800 bg-purple-50 p-4 rounded-lg border border-purple-200">
+          <strong>Dica:</strong> Faça pequenas dobras nas bordas antes de colar para facilitar a junção. Tenha paciência!
         </p>
       </div>
     );

@@ -149,20 +149,20 @@ export const processImageToCubeMap = async (imageUrl: string): Promise<string> =
       const PI = Math.PI;
       const PI_2 = PI / 2;
 
-      // Layout for a cross shape (3 faces wide, 4 faces high) on landscape A4
-      const faceSize = 600; // Face side length
-      const layoutWidth = 3 * faceSize;
-      const layoutHeight = 4 * faceSize;
+      // Layout for a horizontal cross shape (4 faces wide, 3 faces high) to better fit landscape A4
+      const faceSize = Math.min(Math.floor(outputWidth / 4), Math.floor(outputHeight / 3));
+      const layoutWidth = 4 * faceSize;
+      const layoutHeight = 3 * faceSize;
       const offsetX = (outputWidth - layoutWidth) / 2;
       const offsetY = (outputHeight - layoutHeight) / 2;
 
       const faces = {
-        top:    { x: offsetX + faceSize, y: offsetY },
-        left:   { x: offsetX, y: offsetY + faceSize },
-        front:  { x: offsetX + faceSize, y: offsetY + faceSize },
+        top:    { x: offsetX + faceSize,     y: offsetY },
+        left:   { x: offsetX,                y: offsetY + faceSize },
+        front:  { x: offsetX + faceSize,     y: offsetY + faceSize },
         right:  { x: offsetX + 2 * faceSize, y: offsetY + faceSize },
-        bottom: { x: offsetX + faceSize, y: offsetY + 2 * faceSize },
-        back:   { x: offsetX + faceSize, y: offsetY + 3 * faceSize },
+        back:   { x: offsetX + 3 * faceSize, y: offsetY + faceSize },
+        bottom: { x: offsetX + faceSize,     y: offsetY + 2 * faceSize },
       };
 
       const copyPixel = (sourceX: number, sourceY: number, destX: number, destY: number) => {
@@ -187,7 +187,7 @@ export const processImageToCubeMap = async (imageUrl: string): Promise<string> =
             let x=0, y=0, z=0;
             switch(faceName) {
                 case 'front':  x = u;      y = -v;     z = 1;      break;
-                case 'back':   x = -u;     y = v;      z = -1;     break; // Flipped vertically
+                case 'back':   x = -u;     y = -v;     z = -1;     break; // Corrected orientation for horizontal layout
                 case 'left':   x = -1;     y = -v;     z = u;      break;
                 case 'right':  x = 1;      y = -v;     z = -u;     break;
                 case 'top':    x = u;      y = 1;      z = v;      break;
@@ -219,37 +219,39 @@ export const processImageToCubeMap = async (imageUrl: string): Promise<string> =
       outCtx.setLineDash([]); // Solid line
       outCtx.beginPath();
       outCtx.moveTo(faces.top.x, faces.top.y);
-      outCtx.lineTo(faces.top.x + S, faces.top.y);
-      outCtx.lineTo(faces.top.x + S, faces.right.y);
-      outCtx.lineTo(faces.right.x + S, faces.right.y);
-      outCtx.lineTo(faces.right.x + S, faces.right.y + S);
-      outCtx.lineTo(faces.bottom.x + S, faces.right.y + S);
-      outCtx.lineTo(faces.bottom.x + S, faces.bottom.y + S);
-      outCtx.lineTo(faces.back.x + S, faces.bottom.y + S);
-      outCtx.lineTo(faces.back.x + S, faces.back.y + S);
-      outCtx.lineTo(faces.back.x, faces.back.y + S);
-      outCtx.lineTo(faces.back.x, faces.bottom.y + S);
-      outCtx.lineTo(faces.left.x, faces.bottom.y + S);
-      outCtx.lineTo(faces.left.x, faces.left.y + S);
-      outCtx.lineTo(faces.left.x + S, faces.left.y + S);
-      outCtx.lineTo(faces.left.x + S, faces.top.y);
-      outCtx.closePath();
+      outCtx.lineTo(faces.top.x + S, faces.top.y);         // Top edge of Top
+      outCtx.lineTo(faces.top.x + S, faces.front.y);       // Right edge of Top
+      outCtx.lineTo(faces.back.x + S, faces.front.y);      // Top edge of Right & Back
+      outCtx.lineTo(faces.back.x + S, faces.back.y + S);   // Right edge of Back
+      outCtx.lineTo(faces.bottom.x + S, faces.back.y + S); // Bottom edge of Back & Right
+      outCtx.lineTo(faces.bottom.x + S, faces.bottom.y + S); // Right edge of Bottom
+      outCtx.lineTo(faces.bottom.x, faces.bottom.y + S);   // Bottom edge of Bottom
+      outCtx.lineTo(faces.bottom.x, faces.left.y + S);     // Left edge of Bottom
+      outCtx.lineTo(faces.left.x, faces.left.y + S);       // Bottom edge of Left
+      outCtx.lineTo(faces.left.x, faces.left.y);           // Left edge of Left
+      outCtx.lineTo(faces.top.x, faces.left.y);            // Top edge of Left
+      outCtx.closePath();                          // Connects Left-of-Top
       outCtx.stroke();
       
       // Fold lines (inner lines)
       outCtx.strokeStyle = 'rgba(50,50,50,0.5)';
       outCtx.setLineDash([15, 5]);
       outCtx.beginPath();
+      // Top-Front
       outCtx.moveTo(faces.top.x, faces.top.y + S);
       outCtx.lineTo(faces.top.x + S, faces.top.y + S);
-      outCtx.moveTo(faces.front.x, faces.front.y + S);
-      outCtx.lineTo(faces.front.x + S, faces.front.y + S);
-      outCtx.moveTo(faces.bottom.x, faces.bottom.y + S);
-      outCtx.lineTo(faces.bottom.x + S, faces.bottom.y + S);
-      outCtx.moveTo(faces.left.x + S, faces.left.y);
-      outCtx.lineTo(faces.left.x + S, faces.left.y + S);
+      // Front-Bottom
+      outCtx.moveTo(faces.bottom.x, faces.bottom.y);
+      outCtx.lineTo(faces.bottom.x + S, faces.bottom.y);
+      // Left-Front
+      outCtx.moveTo(faces.front.x, faces.front.y);
+      outCtx.lineTo(faces.front.x, faces.front.y + S);
+      // Front-Right
       outCtx.moveTo(faces.right.x, faces.right.y);
       outCtx.lineTo(faces.right.x, faces.right.y + S);
+      // Right-Back
+      outCtx.moveTo(faces.back.x, faces.back.y);
+      outCtx.lineTo(faces.back.x, faces.back.y + S);
       outCtx.stroke();
 
       resolve(outCanvas.toDataURL('image/png'));
