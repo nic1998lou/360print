@@ -7,6 +7,23 @@ import { processImageToGores, processImageToCubeMap } from './services/imageProc
 
 type Shape = 'sphere' | 'cube';
 
+const GeometricDivider: React.FC = () => (
+    <div className="absolute bottom-0 left-0 w-full h-[150px] overflow-hidden leading-none" aria-hidden="true">
+        <svg
+            className="relative block w-full h-full"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
+            viewBox="0 0 1440 150"
+        >
+            <path
+                fill="#ffffff"
+                d="M0 150 L0 70 L120 90 L240 60 L360 80 L480 50 L600 70 L720 40 L840 60 L960 30 L1080 50 L1200 20 L1320 40 L1440 20 L1440 150 Z"
+            />
+        </svg>
+    </div>
+);
+
+
 const App: React.FC = () => {
   const [sourceImageUrl, setSourceImageUrl] = useState<string | null>(null);
   const [processedImageUrl, setProcessedImageUrl] = useState<string | null>(null);
@@ -75,112 +92,135 @@ const App: React.FC = () => {
     return '';
   };
 
-
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center p-4 sm:p-8 transition-all duration-300">
-      <header className="w-full max-w-5xl text-center mb-8 no-print">
-        <div className="flex items-center justify-center gap-4 mb-2">
-            <SphereIcon className="w-12 h-12 text-cyan-400"/>
-            <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight">Gerador de Sólidos Imprimíveis</h1>
+    <div className="bg-white text-slate-700">
+      
+      <div className="relative no-print bg-[#0052ff] h-[480px]">
+        <div className="relative z-10 text-center text-white px-4 pt-20 sm:pt-24">
+            <h1 className="text-sm font-bold tracking-widest uppercase">Bem-vindo ao Futuro da Criação</h1>
+            <h2 className="text-5xl md:text-7xl font-extrabold tracking-tight mt-2">GERADOR DE SÓLIDOS</h2>
+            <p className="mt-4 max-w-xl mx-auto text-lg">
+            Transforme sua imagem panorâmica em um sólido de papel para imprimir e montar.
+            </p>
         </div>
-        <p className="text-lg text-gray-400">Transforme sua imagem 360° em uma esfera ou cubo de papel.</p>
-      </header>
+        <GeometricDivider />
+      </div>
 
-      <main className="w-full max-w-5xl flex-grow">
-        {!sourceImageUrl && !isLoading && (
-          <ImageUploader onImageUpload={handleImageUpload} isLoading={isLoading} />
-        )}
+      <main className="relative px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="max-w-7xl mx-auto mt-[-208px] relative z-20">
+            {!sourceImageUrl && !isLoading && !error && (
+              <ImageUploader onImageUpload={handleImageUpload} isLoading={isLoading} />
+            )}
 
-        {isLoading && (
-            <div className="flex flex-col items-center justify-center h-64 bg-gray-800/50 rounded-lg">
-                <LoadingSpinnerIcon className="w-16 h-16 text-cyan-400"/>
-                <p className="mt-4 text-lg text-gray-300">Processando sua imagem... por favor, aguarde.</p>
-            </div>
-        )}
-
-        {error && (
-            <div className="my-4 p-4 bg-red-800/50 border border-red-600 rounded-lg text-center">
-                <p className="font-semibold text-red-300">Erro!</p>
-                <p className="text-red-400">{error}</p>
-                 <button onClick={handleReset} className="mt-4 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 rounded-md font-semibold transition-colors">
-                    Tentar Novamente
-                </button>
-            </div>
-        )}
-
-        {sourceImageUrl && !processedImageUrl && !isLoading && (
-          <div className="flex flex-col items-center no-print">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-300">1. Sua Imagem Original</h2>
-            <div className="w-full max-w-2xl aspect-video bg-gray-800 rounded-lg overflow-hidden shadow-lg mb-8">
-              <img src={sourceImageUrl} alt="Original" className="w-full h-full object-cover" />
-            </div>
-            <h2 className="text-2xl font-semibold mb-4 text-gray-300">2. Escolha o Formato Final</h2>
-            <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-6">
-              <button
-                onClick={() => handleProcessRequest('sphere')}
-                className="flex items-center gap-3 px-8 py-4 bg-cyan-600 text-white font-bold text-lg rounded-lg hover:bg-cyan-500 transition-transform transform hover:scale-105 shadow-lg"
-              >
-                <SphereIcon className="w-7 h-7" />
-                Gerar Esfera
-              </button>
-              <button
-                onClick={() => handleProcessRequest('cube')}
-                className="flex items-center gap-3 px-8 py-4 bg-teal-600 text-white font-bold text-lg rounded-lg hover:bg-teal-500 transition-transform transform hover:scale-105 shadow-lg"
-              >
-                <CubeIcon className="w-7 h-7" />
-                Gerar Cubo
-              </button>
-            </div>
-          </div>
-        )}
-        
-        <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 ${!processedImageUrl ? 'hidden' : ''}`}>
-             <div className="flex flex-col items-center no-print">
-                <h2 className="text-2xl font-semibold mb-4 text-gray-300">Sua Imagem Original</h2>
-                <div className="w-full aspect-video bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-                    {sourceImageUrl && <img src={sourceImageUrl} alt="Original" className="w-full h-full object-cover" />}
+            {isLoading && (
+                <div className="flex flex-col items-center justify-center h-96 bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-200">
+                    <LoadingSpinnerIcon className="w-16 h-16 text-[#0052ff]"/>
+                    <p className="mt-4 text-lg text-slate-600">Processando sua imagem... por favor, aguarde.</p>
                 </div>
-            </div>
-            
-            <div className="flex flex-col items-center">
-                <h2 className="text-2xl font-semibold mb-4 text-gray-300 no-print">
-                  Pronto para Imprimir ({getShapeName(processedShape)})
-                </h2>
-                <div id="printable-area" className="w-full aspect-[297/210] bg-white rounded-lg overflow-hidden shadow-lg ring-2 ring-cyan-500/50">
-                     {processedImageUrl && <img id="printable-image" src={processedImageUrl} alt="Processada para impressão" className="w-full h-full object-contain" />}
-                </div>
-                {processedImageUrl && (
-                  <div className="flex items-center gap-4 mt-6 no-print">
-                     <a
-                        href={processedImageUrl}
-                        download={`${processedShape}-para-imprimir.png`}
-                        className="flex items-center gap-2 px-6 py-3 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-500 transition-transform transform hover:scale-105 shadow-lg"
-                      >
-                        <DownloadIcon className="w-5 h-5" />
-                        Baixar PNG
-                      </a>
-                       <button
-                        onClick={handlePrint}
-                        className="flex items-center gap-2 px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 transition-transform transform hover:scale-105 shadow-lg"
-                      >
-                        <PrintIcon className="w-5 h-5" />
-                        Imprimir
-                      </button>
-                  </div>
-                )}
-            </div>
-        </div>
+            )}
 
-        {processedImageUrl && (
-            <div className="mt-12 no-print">
-                <Instructions shape={processedShape!} />
-                <div className="text-center mt-8">
-                     <button onClick={handleReset} className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-md font-semibold transition-colors">
-                        Começar de Novo com Outra Imagem
+            {error && (
+                <div className="w-full max-w-3xl mx-auto my-4 p-8 bg-red-50/80 backdrop-blur-md border border-red-300 rounded-3xl text-center shadow-2xl">
+                    <p className="font-bold text-lg text-red-800">Ocorreu um Erro!</p>
+                    <p className="text-red-600 mt-2">{error}</p>
+                    <button onClick={handleReset} className="mt-6 px-5 py-2.5 bg-slate-600 hover:bg-slate-700 text-white rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500">
+                        Tentar Novamente
                     </button>
                 </div>
-            </div>
-        )}
+            )}
+            
+            {/* --- SHAPE SELECTION SCREEN --- */}
+            {sourceImageUrl && !processedImageUrl && !isLoading && !error && (
+              <div className="w-full max-w-5xl mx-auto bg-white p-6 sm:p-10 rounded-3xl shadow-2xl border border-slate-200/50 no-print">
+                <div className="flex flex-col items-center">
+                  <h2 className="text-3xl font-bold mb-6 text-slate-800 tracking-tight text-center">1. Sua Imagem Original</h2>
+                  <div className="w-full max-w-3xl mx-auto aspect-video bg-slate-100 rounded-2xl overflow-hidden ring-1 ring-slate-200/50 shadow-inner">
+                      <img src={sourceImageUrl} alt="Original" className="w-full h-full object-cover" />
+                  </div>
+                
+                  <div className="w-full mt-12 text-center">
+                      <h2 className="text-3xl font-bold mb-8 text-slate-800 tracking-tight">2. Escolha o Formato Final</h2>
+                      <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-6">
+                      <button
+                          onClick={() => handleProcessRequest('sphere')}
+                          className="flex items-center gap-3 px-8 py-4 bg-[#0052ff] text-white font-bold text-lg rounded-md hover:bg-[#0048e0] transition-all duration-300 transform hover:scale-105 shadow-lg shadow-blue-500/30 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                      >
+                          <SphereIcon className="w-7 h-7" />
+                          Gerar Esfera
+                      </button>
+                      <button
+                          onClick={() => handleProcessRequest('cube')}
+                          className="flex items-center gap-3 px-8 py-4 bg-white text-slate-700 border-2 border-slate-300 font-bold text-lg rounded-md hover:bg-slate-100 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-slate-500/20 focus:outline-none focus:ring-4 focus:ring-slate-200"
+                      >
+                          <CubeIcon className="w-7 h-7 text-[#0052ff]" />
+                          Gerar Cubo
+                      </button>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* --- RESULTS SCREEN --- */}
+            {processedImageUrl && !isLoading && !error && (
+              <>
+                <div className="w-full bg-white p-6 sm:p-10 rounded-3xl shadow-2xl border border-slate-200/50 no-print">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Original Image Card */}
+                    <div className="flex flex-col items-center">
+                      <div className="w-full bg-white p-4 sm:p-6 rounded-2xl shadow-xl border border-slate-200">
+                          <h2 className="text-xl font-bold mb-4 text-slate-800 text-center">Sua Imagem Original</h2>
+                          <div className="w-full aspect-video bg-slate-100 rounded-lg overflow-hidden ring-1 ring-slate-200">
+                              {sourceImageUrl && <img src={sourceImageUrl} alt="Original" className="w-full h-full object-cover" />}
+                          </div>
+                      </div>
+                    </div>
+                    
+                    {/* Processed Image Card */}
+                    <div className="flex flex-col items-center">
+                      <div className="w-full bg-white p-4 sm:p-6 rounded-2xl shadow-xl border border-slate-200">
+                        <h2 className="text-xl font-bold mb-4 text-slate-800 text-center">
+                          Pronto para Imprimir ({getShapeName(processedShape)})
+                        </h2>
+                        <div id="printable-area" className="w-full aspect-[297/210] bg-slate-50 rounded-lg p-2 shadow-inner">
+                            {processedImageUrl && <img id="printable-image" src={processedImageUrl} alt="Processada para impressão" className="w-full h-full object-contain" />}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className="flex items-center flex-wrap justify-center gap-4 mt-8">
+                      <a
+                          href={processedImageUrl}
+                          download={`${processedShape}-para-imprimir.png`}
+                          className="flex items-center gap-2 px-6 py-3 bg-[#0052ff] text-white font-semibold rounded-lg hover:bg-[#0048e0] transition-all duration-300 transform hover:scale-105 shadow-lg shadow-blue-500/30 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                      >
+                          <DownloadIcon className="w-5 h-5" />
+                          Baixar PNG
+                      </a>
+                      <button
+                          onClick={handlePrint}
+                          className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-300 font-semibold rounded-lg hover:bg-slate-100 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-slate-500/20 focus:outline-none focus:ring-4 focus:ring-slate-200"
+                      >
+                          <PrintIcon className="w-5 h-5" />
+                          Imprimir
+                      </button>
+                  </div>
+                </div>
+
+                {/* Instructions and Reset */}
+                <div className="mt-12 no-print">
+                    <Instructions shape={processedShape!} />
+                    <div className="text-center mt-12">
+                        <button onClick={handleReset} className="px-6 py-3 bg-white text-slate-700 border border-slate-300 rounded-lg font-semibold transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400">
+                            Começar de Novo com Outra Imagem
+                        </button>
+                    </div>
+                </div>
+              </>
+            )}
+        </div>
       </main>
     </div>
   );

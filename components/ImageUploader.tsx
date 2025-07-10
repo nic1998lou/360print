@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { UploadIcon } from './icons';
 
@@ -47,14 +46,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, isL
 
 
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center p-8 bg-gray-800/50 border-2 border-dashed border-gray-600 rounded-xl transition-all duration-300 hover:border-cyan-500 hover:bg-gray-800/80 no-print">
+    <div className="w-full max-w-2xl mx-auto no-print">
       <label
         htmlFor="image-upload"
         onDragEnter={handleDragIn}
         onDragLeave={handleDragOut}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        className={`w-full flex flex-col items-center justify-center text-center cursor-pointer p-8 rounded-lg ${isDragging ? 'bg-cyan-500/10' : ''}`}
+        className={`group w-full flex flex-col items-center justify-center text-center cursor-pointer p-8 sm:p-10 rounded-2xl transition-all duration-300 border-2 border-dashed shadow-xl
+        ${isDragging ? 'border-blue-500 bg-white/95' : 'border-slate-300/60 bg-white/80 hover:border-blue-400'}
+        backdrop-blur-md`}
       >
         <input
           id="image-upload"
@@ -64,13 +65,15 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, isL
           onChange={handleFileChange}
           disabled={isLoading}
         />
-        <UploadIcon className="w-16 h-16 mb-4 text-gray-500 transition-colors group-hover:text-cyan-400" />
-        <h3 className="text-xl font-semibold text-white">Arraste e solte sua imagem aqui</h3>
-        <p className="text-gray-400 mt-1">ou</p>
-        <p className="mt-2 px-6 py-2 bg-gray-700 rounded-md font-medium text-white">
+        <div className={`p-3 rounded-full bg-slate-200/50 mb-4 transition-all duration-300`}>
+            <UploadIcon className={`w-10 h-10 text-slate-500 transition-colors duration-300`} />
+        </div>
+        <h3 className="text-xl font-semibold text-slate-700">Arraste e solte sua imagem aqui</h3>
+        <p className="text-slate-500 mt-1.5 text-sm">ou</p>
+        <div className="mt-4 px-6 py-2.5 bg-[#0052ff] hover:bg-[#0048e0] rounded-lg font-medium text-white transition-colors duration-200 shadow-sm">
           Selecione um arquivo
-        </p>
-        <p className="text-xs text-gray-500 mt-6">Use imagens panorâmicas (equiretangular 2:1) para melhores resultados.</p>
+        </div>
+        <p className="text-xs text-slate-500 mt-6">Use imagens panorâmicas (equiretangular 2:1) para melhores resultados.</p>
       </label>
     </div>
   );
